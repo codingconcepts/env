@@ -27,7 +27,6 @@ func Env(i interface{}) (err error) {
 	return
 }
 
-// clean this horrific shit up
 func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
 	envTag, ok := t.Tag.Lookup("env")
 	if !ok {

@@ -80,6 +80,34 @@ func TestEnvString(t *testing.T) {
 	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.PropString)
 }
 
+func TestInvalidConfigurationForType(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		PropString int `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+}
+
+func TestInvalidValueForRequiredTag(t *testing.T) {
+	config := struct {
+		PropString int `env:"PROP" required:"invalid"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+}
+
+func TestEnvNoEnvTag(t *testing.T) {
+	config := struct {
+		PropString string
+	}{}
+
+	test.ErrorNil(t, Env(&config))
+}
+
 func TestEnvRequiredWhenProvided(t *testing.T) {
 	os.Setenv("PROP", "hello")
 
@@ -98,5 +126,4 @@ func TestEnvRequiredWhenMissing(t *testing.T) {
 
 	err := Env(&config)
 	test.ErrorNotNil(t, err)
-	test.Equals(t, "MISSING_PROP environment configuration was missing", err.Error())
 }
