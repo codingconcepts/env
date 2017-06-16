@@ -1,5 +1,5 @@
 # shape
-Tag-based environment configuration for structs.
+Tag-based configuration for structs.
 
 ## Installation
 
