@@ -107,8 +107,6 @@ func TestUnsignedIntegerRanges(t *testing.T) {
 }
 
 func TestUnsignedFloatRanges(t *testing.T) {
-	t.SkipNow()
-
 	testCases := []struct {
 		Prop32 float32
 		Prop64 float64
@@ -119,8 +117,8 @@ func TestUnsignedFloatRanges(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%v", testCase), func(t *testing.T) {
-			os.Setenv("PROP32", fmt.Sprintf("%.f", testCase.Prop32))
-			os.Setenv("PROP64", fmt.Sprintf("%.f", testCase.Prop64))
+			os.Setenv("PROP32", fmt.Sprintf("%g", testCase.Prop32))
+			os.Setenv("PROP64", fmt.Sprintf("%g", testCase.Prop64))
 
 			config := struct {
 				Prop32 float32 `env:"PROP32"`
