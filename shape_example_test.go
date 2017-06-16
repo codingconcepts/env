@@ -7,16 +7,16 @@ import (
 
 func ExampleEnv() {
 	os.Setenv("PROP_A", "value a")
-	os.Setenv("PROP_B", "value b")
+	os.Setenv("PROP_B", "42")
 
 	config := struct {
 		PropA string `env:"PROP_A"`
-		PropB string `env:"PROP_B"`
+		PropB int16  `env:"PROP_B"`
 	}{}
 
 	Env(&config)
 
 	fmt.Println(config)
 
-	// OUTPUT: {value a value b}
+	// OUTPUT: {value a 42}
 }
