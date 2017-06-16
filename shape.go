@@ -5,6 +5,8 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 type configType string
@@ -39,7 +41,7 @@ func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
 	}
 
 	if err = setField(v, env); err != nil {
-		return
+		return errors.Wrapf(err, "error setting %s", t.Name)
 	}
 
 	return
@@ -53,7 +55,7 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 
 	var b bool
 	if b, err = strconv.ParseBool(reqTag); err != nil {
-		return
+		return errors.Wrapf(err, fmt.Sprintf("invalid required tag '%s'", reqTag))
 	}
 
 	if b {

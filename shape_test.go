@@ -2,6 +2,7 @@ package shape
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/codingconcepts/shape/test"
@@ -73,36 +74,28 @@ func TestEnvString(t *testing.T) {
 	os.Setenv("PROP", "}D-Z2P£T!E*#zE=.gc@")
 
 	config := struct {
-		PropString string `env:"PROP"`
+		Prop string `env:"PROP"`
 	}{}
 
 	test.ErrorNil(t, Env(&config))
-	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.PropString)
-}
-
-func TestInvalidConfigurationForType(t *testing.T) {
-	os.Setenv("PROP", "hello")
-
-	config := struct {
-		PropString int `env:"PROP"`
-	}{}
-
-	err := Env(&config)
-	test.ErrorNotNil(t, err)
+	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
 func TestInvalidValueForRequiredTag(t *testing.T) {
+	os.Unsetenv("PROP")
+
 	config := struct {
-		PropString int `env:"PROP" required:"invalid"`
+		Prop int `env:"PROP" required:"invalid"`
 	}{}
 
 	err := Env(&config)
 	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "invalid required tag 'invalid'"))
 }
 
 func TestEnvNoEnvTag(t *testing.T) {
 	config := struct {
-		PropString string
+		Prop string
 	}{}
 
 	test.ErrorNil(t, Env(&config))
@@ -112,18 +105,88 @@ func TestEnvRequiredWhenProvided(t *testing.T) {
 	os.Setenv("PROP", "hello")
 
 	config := struct {
-		PropString string `env:"PROP" required:"true"`
+		Prop string `env:"PROP" required:"true"`
 	}{}
 
 	test.ErrorNil(t, Env(&config))
-	test.Equals(t, "hello", config.PropString)
+	test.Equals(t, "hello", config.Prop)
 }
 
 func TestEnvRequiredWhenMissing(t *testing.T) {
 	config := struct {
-		PropString string `env:"MISSING_PROP" required:"true"`
+		Prop string `env:"MISSING_PROP" required:"true"`
 	}{}
 
 	err := Env(&config)
 	test.ErrorNotNil(t, err)
+}
+
+func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
+	os.Unsetenv("PROP")
+
+	config := struct {
+		Prop string `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNil(t, err)
+}
+
+func TestEnvNotRequiredExplicitWhenMissing(t *testing.T) {
+	os.Unsetenv("PROP")
+
+	config := struct {
+		Prop string `env:"PROP" required:"false"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNil(t, err)
+}
+
+func TestInvalidConfigurationForBoolType(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop bool `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+}
+
+func TestInvalidConfigurationForIntType(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop int `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+}
+
+func TestInvalidConfigurationForUintType(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop uint `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+}
+
+func TestInvalidConfigurationForFloatType(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop float32 `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
