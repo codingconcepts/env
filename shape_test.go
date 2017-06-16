@@ -81,7 +81,7 @@ func TestEnvString(t *testing.T) {
 	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
-func TestEnvSetUnexportedRequiredProperty(t *testing.T) {
+func TestEnvSetUnexportedProperty(t *testing.T) {
 	os.Setenv("PROP", "hello")
 
 	config := struct {
