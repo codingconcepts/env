@@ -1,6 +1,10 @@
 # shape
 Tag-based environment configuration for structs.
 
+[![Godoc](https://godoc.org/github.com/codingconcepts/shape?status.svg)](https://godoc.org/github.com/codingconcepts/shape)
+[![Build Status](https://travis-ci.org/codingconcepts/shape.svg?branch=master)](https://travis-ci.org/codingconcepts/shape)
+[![Exago](https://api.exago.io:443/badge/cov/github.com/codingconcepts/shape)](https://exago.io/project/github.com/codingconcepts/shape)
+
 ## Installation
 
 ``` bash
