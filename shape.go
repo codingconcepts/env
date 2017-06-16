@@ -16,6 +16,8 @@ const (
 )
 
 // Env sets the fields of a struct from environment config.
+// If a field is unexported or required configuration is not
+// found, an error will be returned.
 func Env(i interface{}) (err error) {
 	t := reflect.TypeOf(i).Elem()
 	v := reflect.ValueOf(i).Elem()
@@ -29,14 +31,23 @@ func Env(i interface{}) (err error) {
 	return
 }
 
+// processEnvField will lookup the "env" tag for the property
+// and attempt to set it.  If not found, another check for the
+// "required" tag will be performed to decided whether an error
+// needs to be returned.
 func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
 	envTag, ok := t.Tag.Lookup("env")
 	if !ok {
+		// if the env tag isn't found, don't attempt to set a
+		// value for the field.
 		return
 	}
 
 	env, ok := os.LookupEnv(envTag)
 	if !ok {
+		// an env tag has been provided but a matching environment
+		// variable cannot be found, determine if we should return
+		// an error or if a missing variable is ok/expected.
 		return processMissing(t, envTag, configTypeEnvironment)
 	}
 
@@ -47,6 +58,10 @@ func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
 	return
 }
 
+// processMissing returns an error if a required tag is found
+// and is set to true.  A different error will be returned if
+// the required tag was present but the value could not be parsed
+// to a Boolean value.
 func processMissing(t reflect.StructField, envTag string, ct configType) (err error) {
 	reqTag, ok := t.Tag.Lookup("required")
 	if !ok {
@@ -55,16 +70,23 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 
 	var b bool
 	if b, err = strconv.ParseBool(reqTag); err != nil {
+		// the value provided for the required tag is not a valid
+		// Boolean, so inform the user.
 		return errors.Wrapf(err, fmt.Sprintf("invalid required tag '%s'", reqTag))
 	}
 
 	if b {
+		// the value provided for the required tag is valid and is
+		// set to true, so the user needs to know that a required
+		// environment variable could not be found.
 		return fmt.Errorf("%s %s configuration was missing", envTag, ct)
 	}
 
 	return
 }
 
+// setField determines a field's type and parses the given value
+// accordingly.  An error will be returned if the field is unexported.
 func setField(fieldValue reflect.Value, value string) error {
 	if !fieldValue.CanSet() {
 		return fmt.Errorf("field is unexported")

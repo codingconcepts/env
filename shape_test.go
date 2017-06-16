@@ -1,11 +1,11 @@
 package shape
 
 import (
+	"fmt"
+	"math"
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/codingconcepts/shape/test"
 )
 
 func TestEnvBool(t *testing.T) {
@@ -15,8 +15,8 @@ func TestEnvBool(t *testing.T) {
 		Prop bool `env:"PROP"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, true, config.Prop)
+	ErrorNil(t, Env(&config))
+	Equals(t, true, config.Prop)
 }
 
 func TestEnvIntegers(t *testing.T) {
@@ -30,12 +30,108 @@ func TestEnvIntegers(t *testing.T) {
 		PropInt64 int64 `env:"PROP"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, int(123), config.PropInt)
-	test.Equals(t, int8(123), config.PropInt8)
-	test.Equals(t, int16(123), config.PropInt16)
-	test.Equals(t, int32(123), config.PropInt32)
-	test.Equals(t, int64(123), config.PropInt64)
+	ErrorNil(t, Env(&config))
+	Equals(t, int(123), config.PropInt)
+	Equals(t, int8(123), config.PropInt8)
+	Equals(t, int16(123), config.PropInt16)
+	Equals(t, int32(123), config.PropInt32)
+	Equals(t, int64(123), config.PropInt64)
+}
+
+func TestIntegerRanges(t *testing.T) {
+	testCases := []struct {
+		Prop8  int8
+		Prop16 int16
+		Prop32 int32
+		Prop64 int64
+	}{
+		{Prop8: math.MinInt8, Prop16: math.MinInt16, Prop32: math.MinInt32, Prop64: math.MinInt64},
+		{Prop8: math.MaxInt8, Prop16: math.MaxInt16, Prop32: math.MaxInt32, Prop64: math.MaxInt64},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(fmt.Sprintf("%v", testCase), func(t *testing.T) {
+			os.Setenv("PROP8", fmt.Sprintf("%d", testCase.Prop8))
+			os.Setenv("PROP16", fmt.Sprintf("%d", testCase.Prop16))
+			os.Setenv("PROP32", fmt.Sprintf("%d", testCase.Prop32))
+			os.Setenv("PROP64", fmt.Sprintf("%d", testCase.Prop64))
+
+			config := struct {
+				Prop8  int8  `env:"PROP8"`
+				Prop16 int16 `env:"PROP16"`
+				Prop32 int32 `env:"PROP32"`
+				Prop64 int64 `env:"PROP64"`
+			}{}
+
+			ErrorNil(t, Env(&config))
+			Equals(t, testCase.Prop8, config.Prop8)
+			Equals(t, testCase.Prop16, config.Prop16)
+			Equals(t, testCase.Prop32, config.Prop32)
+			Equals(t, testCase.Prop64, config.Prop64)
+		})
+	}
+}
+
+func TestUnsignedIntegerRanges(t *testing.T) {
+	testCases := []struct {
+		Prop8  uint8
+		Prop16 uint16
+		Prop32 uint32
+		Prop64 uint64
+	}{
+		{Prop8: 0, Prop16: 0, Prop32: 0, Prop64: 0},
+		{Prop8: math.MaxUint8, Prop16: math.MaxUint16, Prop32: math.MaxUint32, Prop64: math.MaxUint64},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(fmt.Sprintf("%v", testCase), func(t *testing.T) {
+			os.Setenv("PROP8", fmt.Sprintf("%d", testCase.Prop8))
+			os.Setenv("PROP16", fmt.Sprintf("%d", testCase.Prop16))
+			os.Setenv("PROP32", fmt.Sprintf("%d", testCase.Prop32))
+			os.Setenv("PROP64", fmt.Sprintf("%d", testCase.Prop64))
+
+			config := struct {
+				Prop8  uint8  `env:"PROP8"`
+				Prop16 uint16 `env:"PROP16"`
+				Prop32 uint32 `env:"PROP32"`
+				Prop64 uint64 `env:"PROP64"`
+			}{}
+
+			ErrorNil(t, Env(&config))
+			Equals(t, testCase.Prop8, config.Prop8)
+			Equals(t, testCase.Prop16, config.Prop16)
+			Equals(t, testCase.Prop32, config.Prop32)
+			Equals(t, testCase.Prop64, config.Prop64)
+		})
+	}
+}
+
+func TestUnsignedFloatRanges(t *testing.T) {
+	t.SkipNow()
+
+	testCases := []struct {
+		Prop32 float32
+		Prop64 float64
+	}{
+		{Prop32: math.SmallestNonzeroFloat32, Prop64: math.SmallestNonzeroFloat64},
+		{Prop32: math.MaxFloat32, Prop64: math.MaxFloat64},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(fmt.Sprintf("%v", testCase), func(t *testing.T) {
+			os.Setenv("PROP32", fmt.Sprintf("%.f", testCase.Prop32))
+			os.Setenv("PROP64", fmt.Sprintf("%.f", testCase.Prop64))
+
+			config := struct {
+				Prop32 float32 `env:"PROP32"`
+				Prop64 float64 `env:"PROP64"`
+			}{}
+
+			ErrorNil(t, Env(&config))
+			Equals(t, testCase.Prop32, config.Prop32)
+			Equals(t, testCase.Prop64, config.Prop64)
+		})
+	}
 }
 
 func TestEnvUnsignedIntegers(t *testing.T) {
@@ -49,12 +145,12 @@ func TestEnvUnsignedIntegers(t *testing.T) {
 		PropUint64 uint64 `env:"PROP"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, uint(123), config.PropUint)
-	test.Equals(t, uint8(123), config.PropUint8)
-	test.Equals(t, uint16(123), config.PropUint16)
-	test.Equals(t, uint32(123), config.PropUint32)
-	test.Equals(t, uint64(123), config.PropUint64)
+	ErrorNil(t, Env(&config))
+	Equals(t, uint(123), config.PropUint)
+	Equals(t, uint8(123), config.PropUint8)
+	Equals(t, uint16(123), config.PropUint16)
+	Equals(t, uint32(123), config.PropUint32)
+	Equals(t, uint64(123), config.PropUint64)
 }
 
 func TestEnvFloats(t *testing.T) {
@@ -65,9 +161,9 @@ func TestEnvFloats(t *testing.T) {
 		PropFloat64 float64 `env:"PROP"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, float32(1.23), config.PropFloat32)
-	test.Equals(t, float64(1.23), config.PropFloat64)
+	ErrorNil(t, Env(&config))
+	Equals(t, float32(1.23), config.PropFloat32)
+	Equals(t, float64(1.23), config.PropFloat64)
 }
 
 func TestEnvString(t *testing.T) {
@@ -77,8 +173,8 @@ func TestEnvString(t *testing.T) {
 		Prop string `env:"PROP"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
+	ErrorNil(t, Env(&config))
+	Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
 func TestEnvSetUnexportedProperty(t *testing.T) {
@@ -89,9 +185,9 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
-	test.Assert(t, strings.Contains(err.Error(), "field is unexported"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
+	Assert(t, strings.Contains(err.Error(), "field is unexported"))
 }
 
 func TestInvalidValueForRequiredTag(t *testing.T) {
@@ -102,8 +198,8 @@ func TestInvalidValueForRequiredTag(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "invalid required tag 'invalid'"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "invalid required tag 'invalid'"))
 }
 
 func TestEnvNoEnvTag(t *testing.T) {
@@ -111,7 +207,7 @@ func TestEnvNoEnvTag(t *testing.T) {
 		Prop string
 	}{}
 
-	test.ErrorNil(t, Env(&config))
+	ErrorNil(t, Env(&config))
 }
 
 func TestEnvRequiredWhenProvided(t *testing.T) {
@@ -121,8 +217,8 @@ func TestEnvRequiredWhenProvided(t *testing.T) {
 		Prop string `env:"PROP" required:"true"`
 	}{}
 
-	test.ErrorNil(t, Env(&config))
-	test.Equals(t, "hello", config.Prop)
+	ErrorNil(t, Env(&config))
+	Equals(t, "hello", config.Prop)
 }
 
 func TestEnvRequiredWhenMissing(t *testing.T) {
@@ -131,7 +227,7 @@ func TestEnvRequiredWhenMissing(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
+	ErrorNotNil(t, err)
 }
 
 func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
@@ -142,7 +238,7 @@ func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNil(t, err)
+	ErrorNil(t, err)
 }
 
 func TestEnvNotRequiredExplicitWhenMissing(t *testing.T) {
@@ -153,7 +249,7 @@ func TestEnvNotRequiredExplicitWhenMissing(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNil(t, err)
+	ErrorNil(t, err)
 }
 
 func TestInvalidConfigurationForBoolType(t *testing.T) {
@@ -164,8 +260,8 @@ func TestInvalidConfigurationForBoolType(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
 
 func TestInvalidConfigurationForIntType(t *testing.T) {
@@ -176,8 +272,8 @@ func TestInvalidConfigurationForIntType(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
 
 func TestInvalidConfigurationForUintType(t *testing.T) {
@@ -188,8 +284,8 @@ func TestInvalidConfigurationForUintType(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
 
 func TestInvalidConfigurationForFloatType(t *testing.T) {
@@ -200,6 +296,6 @@ func TestInvalidConfigurationForFloatType(t *testing.T) {
 	}{}
 
 	err := Env(&config)
-	test.ErrorNotNil(t, err)
-	test.Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
