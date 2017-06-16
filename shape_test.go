@@ -81,6 +81,19 @@ func TestEnvString(t *testing.T) {
 	test.Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
+func TestEnvSetUnexportedRequiredProperty(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		prop string `env:"PROP"`
+	}{}
+
+	err := Env(&config)
+	test.ErrorNotNil(t, err)
+	test.Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
+	test.Assert(t, strings.Contains(err.Error(), "field is unexported"))
+}
+
 func TestInvalidValueForRequiredTag(t *testing.T) {
 	os.Unsetenv("PROP")
 

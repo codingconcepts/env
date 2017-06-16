@@ -66,6 +66,10 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 }
 
 func setField(fieldValue reflect.Value, value string) error {
+	if !fieldValue.CanSet() {
+		return fmt.Errorf("field is unexported")
+	}
+
 	switch fieldValue.Kind() {
 	case reflect.Bool:
 		b, err := strconv.ParseBool(value)

@@ -34,8 +34,3 @@ func main() {
 	...
 }
 ```
-
-## Todos
-
-- [x] required tag
-- [ ] check for unexported
