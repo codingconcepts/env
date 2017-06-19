@@ -304,6 +304,7 @@ func TestEnvNonPointer(t *testing.T) {
 	}{}
 
 	err := Env(config)
+	fmt.Println(err)
 	ErrorNotNil(t, err)
-	Assert(t, strings.Contains(err.Error(), "not a pointer"))
+	Equals(t, err.Error(), "struct is not a pointer")
 }
