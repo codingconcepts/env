@@ -1,11 +1,13 @@
 package env
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestEnvBool(t *testing.T) {
@@ -184,7 +186,6 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
 	Assert(t, strings.Contains(err.Error(), "field cannot be set"))
 }
 
@@ -304,7 +305,84 @@ func TestEnvNonPointer(t *testing.T) {
 	}{}
 
 	err := Set(config)
-	fmt.Println(err)
 	ErrorNotNil(t, err)
 	Equals(t, err.Error(), "struct is not a pointer")
+}
+
+func TestEnvCustomTypeAliasedPrimativeWithoutSetter(t *testing.T) {
+	os.Setenv("PROP", "1234")
+
+	config := struct {
+		Prop myInt `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, myInt(1234), config.Prop)
+}
+
+type myInt int16
+
+func TestEnvCustomTypeAliasedPrimativeWithSetter(t *testing.T) {
+	t.SkipNow()
+
+	os.Setenv("PROP", "1234")
+
+	config := struct {
+		Prop stringSlice `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	fmt.Println(config.Prop)
+	Equals(t, stringSlice{"a", "b", "c"}, config.Prop)
+}
+
+type stringSlice []string
+
+func (s stringSlice) Set(value string) (err error) {
+	slice := strings.Split(value, ",")
+	s = stringSlice(slice)
+	return
+}
+
+func TestEnvCustomTypeStruct(t *testing.T) {
+	os.Setenv("PROP", "3h2m1s")
+
+	config := struct {
+		Timeout *configDuration `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, time.Hour*3+time.Minute*2+time.Second*1, config.Timeout.Duration)
+}
+
+func TestEnvCustomTypeStructWithError(t *testing.T) {
+	os.Setenv("PROP", "3h2m1s")
+
+	config := struct {
+		Timeout *configDurationError `env:"PROP"`
+	}{}
+
+	err := Set(&config)
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error in custom setter"))
+	Assert(t, strings.Contains(err.Error(), errConfigDurationError.Error()))
+}
+
+type configDuration struct {
+	Duration time.Duration
+}
+
+func (d *configDuration) Set(config string) (err error) {
+	d.Duration, err = time.ParseDuration(config)
+	return
+}
+
+type configDurationError struct {
+	Duration time.Duration
+}
+
+var errConfigDurationError = errors.New("example error from custom Set code")
+
+func (d *configDurationError) Set(config string) (err error) {
+	return errConfigDurationError
 }

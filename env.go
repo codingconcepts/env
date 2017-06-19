@@ -15,6 +15,13 @@ const (
 	configTypeEnvironment configType = "environment"
 )
 
+// Setter is called for any complex struct field with an
+// implementation, allowing developers to override Set
+// behaviour.
+type Setter interface {
+	Set(string) error
+}
+
 // Set sets the fields of a struct from environment config.
 // If a field is unexported or required configuration is not
 // found, an error will be returned.
@@ -58,6 +65,25 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 		return processMissing(t, envTag, configTypeEnvironment)
 	}
 
+	// if the field is unexported or just not settable, bail at
+	// this point because all subsequent operations will fail.
+	if !v.CanSet() {
+		return fmt.Errorf("field cannot be set")
+	}
+
+	// if field implements the Setter interface, invoke it now and
+	// don't continue attempting to set the primative values.
+	if _, ok := v.Interface().(Setter); ok {
+		instance := reflect.New(t.Type.Elem())
+		v.Set(instance)
+
+		// re-assert the type with the newed-up instance and call.
+		setter := v.Interface().(Setter)
+		if err = setter.Set(env); err != nil {
+			return errors.Wrapf(err, "error in custom setter")
+		}
+	}
+
 	if err = setField(v, env); err != nil {
 		return errors.Wrapf(err, "error setting %s", t.Name)
 	}
@@ -96,11 +122,7 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 
 // setField determines a field's type and parses the given value
 // accordingly.  An error will be returned if the field is unexported.
-func setField(fieldValue reflect.Value, value string) error {
-	if !fieldValue.CanSet() {
-		return fmt.Errorf("field cannot be set")
-	}
-
+func setField(fieldValue reflect.Value, value string) (err error) {
 	switch fieldValue.Kind() {
 	case reflect.Bool:
 		b, err := strconv.ParseBool(value)

@@ -38,3 +38,5 @@ func main() {
 	...
 }
 ```
+
+- [ ] Allow user to override Set method for fields
