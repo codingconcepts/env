@@ -72,6 +72,8 @@ func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
 func processMissing(t reflect.StructField, envTag string, ct configType) (err error) {
 	reqTag, ok := t.Tag.Lookup("required")
 	if !ok {
+		// no required tag was found, this field doesn't expect
+		// an env tag to be provided.
 		return nil
 	}
 
@@ -96,7 +98,7 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 // accordingly.  An error will be returned if the field is unexported.
 func setField(fieldValue reflect.Value, value string) error {
 	if !fieldValue.CanSet() {
-		return fmt.Errorf("field is unexported")
+		return fmt.Errorf("field cannot be set")
 	}
 
 	switch fieldValue.Kind() {

@@ -185,7 +185,7 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 	err := Env(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
-	Assert(t, strings.Contains(err.Error(), "field is unexported"))
+	Assert(t, strings.Contains(err.Error(), "field cannot be set"))
 }
 
 func TestInvalidValueForRequiredTag(t *testing.T) {
