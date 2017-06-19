@@ -1,4 +1,4 @@
-package shape
+package env
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func TestEnvBool(t *testing.T) {
 		Prop bool `env:"PROP"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, true, config.Prop)
 }
 
@@ -30,7 +30,7 @@ func TestEnvIntegers(t *testing.T) {
 		PropInt64 int64 `env:"PROP"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, int(123), config.PropInt)
 	Equals(t, int8(123), config.PropInt8)
 	Equals(t, int16(123), config.PropInt16)
@@ -63,7 +63,7 @@ func TestIntegerRanges(t *testing.T) {
 				Prop64 int64 `env:"PROP64"`
 			}{}
 
-			ErrorNil(t, Env(&config))
+			ErrorNil(t, Set(&config))
 			Equals(t, testCase.Prop8, config.Prop8)
 			Equals(t, testCase.Prop16, config.Prop16)
 			Equals(t, testCase.Prop32, config.Prop32)
@@ -97,7 +97,7 @@ func TestUnsignedIntegerRanges(t *testing.T) {
 				Prop64 uint64 `env:"PROP64"`
 			}{}
 
-			ErrorNil(t, Env(&config))
+			ErrorNil(t, Set(&config))
 			Equals(t, testCase.Prop8, config.Prop8)
 			Equals(t, testCase.Prop16, config.Prop16)
 			Equals(t, testCase.Prop32, config.Prop32)
@@ -125,7 +125,7 @@ func TestUnsignedFloatRanges(t *testing.T) {
 				Prop64 float64 `env:"PROP64"`
 			}{}
 
-			ErrorNil(t, Env(&config))
+			ErrorNil(t, Set(&config))
 			Equals(t, testCase.Prop32, config.Prop32)
 			Equals(t, testCase.Prop64, config.Prop64)
 		})
@@ -143,7 +143,7 @@ func TestEnvUnsignedIntegers(t *testing.T) {
 		PropUint64 uint64 `env:"PROP"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, uint(123), config.PropUint)
 	Equals(t, uint8(123), config.PropUint8)
 	Equals(t, uint16(123), config.PropUint16)
@@ -159,7 +159,7 @@ func TestEnvFloats(t *testing.T) {
 		PropFloat64 float64 `env:"PROP"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, float32(1.23), config.PropFloat32)
 	Equals(t, float64(1.23), config.PropFloat64)
 }
@@ -171,7 +171,7 @@ func TestEnvString(t *testing.T) {
 		Prop string `env:"PROP"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
@@ -182,7 +182,7 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 		prop string `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting prop"))
 	Assert(t, strings.Contains(err.Error(), "field cannot be set"))
@@ -195,7 +195,7 @@ func TestInvalidValueForRequiredTag(t *testing.T) {
 		Prop int `env:"PROP" required:"invalid"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "invalid required tag 'invalid'"))
 }
@@ -205,7 +205,7 @@ func TestEnvNoEnvTag(t *testing.T) {
 		Prop string
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 }
 
 func TestEnvRequiredWhenProvided(t *testing.T) {
@@ -215,7 +215,7 @@ func TestEnvRequiredWhenProvided(t *testing.T) {
 		Prop string `env:"PROP" required:"true"`
 	}{}
 
-	ErrorNil(t, Env(&config))
+	ErrorNil(t, Set(&config))
 	Equals(t, "hello", config.Prop)
 }
 
@@ -224,7 +224,7 @@ func TestEnvRequiredWhenMissing(t *testing.T) {
 		Prop string `env:"MISSING_PROP" required:"true"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 }
 
@@ -235,7 +235,7 @@ func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
 		Prop string `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNil(t, err)
 }
 
@@ -246,7 +246,7 @@ func TestEnvNotRequiredExplicitWhenMissing(t *testing.T) {
 		Prop string `env:"PROP" required:"false"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNil(t, err)
 }
 
@@ -257,7 +257,7 @@ func TestInvalidConfigurationForBoolType(t *testing.T) {
 		Prop bool `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
@@ -269,7 +269,7 @@ func TestInvalidConfigurationForIntType(t *testing.T) {
 		Prop int `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
@@ -281,7 +281,7 @@ func TestInvalidConfigurationForUintType(t *testing.T) {
 		Prop uint `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
@@ -293,7 +293,7 @@ func TestInvalidConfigurationForFloatType(t *testing.T) {
 		Prop float32 `env:"PROP"`
 	}{}
 
-	err := Env(&config)
+	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
@@ -303,7 +303,7 @@ func TestEnvNonPointer(t *testing.T) {
 		Prop float32 `env:"PROP"`
 	}{}
 
-	err := Env(config)
+	err := Set(config)
 	fmt.Println(err)
 	ErrorNotNil(t, err)
 	Equals(t, err.Error(), "struct is not a pointer")

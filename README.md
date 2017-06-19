@@ -1,14 +1,14 @@
-# shape
+# env
 Tag-based environment configuration for structs.
 
-[![Godoc](https://godoc.org/github.com/codingconcepts/shape?status.svg)](https://godoc.org/github.com/codingconcepts/shape)
-[![Build Status](https://travis-ci.org/codingconcepts/shape.svg?branch=master)](https://travis-ci.org/codingconcepts/shape)
-[![Exago](https://api.exago.io:443/badge/cov/github.com/codingconcepts/shape)](https://exago.io/project/github.com/codingconcepts/shape)
+[![Godoc](https://godoc.org/github.com/codingconcepts/env?status.svg)](https://godoc.org/github.com/codingconcepts/env)
+[![Build Status](https://travis-ci.org/codingconcepts/env.svg?branch=master)](https://travis-ci.org/codingconcepts/env)
+[![Exago](https://api.exago.io:443/badge/cov/github.com/codingconcepts/env)](https://exago.io/project/github.com/codingconcepts/env)
 
 ## Installation
 
 ``` bash
-$ go get -u github.com/codingconcepts/shape
+$ go get -u github.com/codingconcepts/env
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/codingconcepts/shape"
+	"github.com/codingconcepts/env"
 )
 
 type awsConfig struct {
@@ -31,7 +31,7 @@ type awsConfig struct {
 
 func main() {
 	config := awsConfig{}
-	if err := shape.Env(&config); err != nil {
+	if err := env.Set(&config); err != nil {
 		log.Fatal(err)
 	}
 

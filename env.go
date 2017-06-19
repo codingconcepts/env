@@ -1,4 +1,4 @@
-package shape
+package env
 
 import (
 	"fmt"
@@ -15,10 +15,10 @@ const (
 	configTypeEnvironment configType = "environment"
 )
 
-// Env sets the fields of a struct from environment config.
+// Set sets the fields of a struct from environment config.
 // If a field is unexported or required configuration is not
 // found, an error will be returned.
-func Env(i interface{}) (err error) {
+func Set(i interface{}) (err error) {
 	v := reflect.ValueOf(i)
 
 	// don't try to process a non-pointer value
@@ -30,7 +30,7 @@ func Env(i interface{}) (err error) {
 	t := reflect.TypeOf(i).Elem()
 
 	for i := 0; i < t.NumField(); i++ {
-		if err = processEnvField(t.Field(i), v.Field(i)); err != nil {
+		if err = processField(t.Field(i), v.Field(i)); err != nil {
 			return
 		}
 	}
@@ -38,11 +38,11 @@ func Env(i interface{}) (err error) {
 	return
 }
 
-// processEnvField will lookup the "env" tag for the property
+// processField will lookup the "env" tag for the property
 // and attempt to set it.  If not found, another check for the
 // "required" tag will be performed to decided whether an error
 // needs to be returned.
-func processEnvField(t reflect.StructField, v reflect.Value) (err error) {
+func processField(t reflect.StructField, v reflect.Value) (err error) {
 	envTag, ok := t.Tag.Lookup("env")
 	if !ok {
 		// if the env tag isn't found, don't attempt to set a

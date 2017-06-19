@@ -1,4 +1,4 @@
-package shape
+package env
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ func ExampleEnv() {
 		PropB int16  `env:"PROP_B"`
 	}{}
 
-	Env(&config)
+	Set(&config)
 
 	fmt.Println(config)
 	// OUTPUT: {value a 42}
