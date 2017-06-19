@@ -39,4 +39,9 @@ func main() {
 }
 ```
 
-- [ ] Allow user to override Set method for fields
+## Todos
+
+Allow user to override Set method for:
+
+- [x] Structs
+- [ ] Slices
