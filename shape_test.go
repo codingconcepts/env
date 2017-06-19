@@ -297,3 +297,13 @@ func TestInvalidConfigurationForFloatType(t *testing.T) {
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
+
+func TestEnvNonPointer(t *testing.T) {
+	config := struct {
+		Prop float32 `env:"PROP"`
+	}{}
+
+	err := Env(config)
+	ErrorNotNil(t, err)
+	Assert(t, strings.Contains(err.Error(), "not a pointer"))
+}

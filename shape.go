@@ -19,8 +19,15 @@ const (
 // If a field is unexported or required configuration is not
 // found, an error will be returned.
 func Env(i interface{}) (err error) {
+	v := reflect.ValueOf(i)
+
+	// don't try to process a non-pointer value
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return fmt.Errorf("%s is not a pointer", v.Kind())
+	}
+
+	v = v.Elem()
 	t := reflect.TypeOf(i).Elem()
-	v := reflect.ValueOf(i).Elem()
 
 	for i := 0; i < t.NumField(); i++ {
 		if err = processEnvField(t.Field(i), v.Field(i)); err != nil {
