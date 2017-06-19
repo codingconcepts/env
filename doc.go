@@ -1,5 +1,5 @@
-// Package env allows struct fields to be populated directly from environment
-// variables.
+// Package env makes satisfying factor III of the 12-factor methodology easy, by allowing struct fields to be populated directly from environment
+// variables with the use of struct tags.
 //
 // To use, create a struct tag called "env" and call env.Set, passing a pointer
 // to the struct you wish to populate.  You can optionally, provide a "required"
