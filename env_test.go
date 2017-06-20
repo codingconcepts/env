@@ -186,7 +186,7 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.Contains(err.Error(), "field cannot be set"))
+	Assert(t, strings.Contains(err.Error(), "field 'prop' cannot be set"))
 }
 
 func TestInvalidValueForRequiredTag(t *testing.T) {
@@ -321,29 +321,6 @@ func TestEnvCustomTypeAliasedPrimativeWithoutSetter(t *testing.T) {
 }
 
 type myInt int16
-
-func TestEnvCustomTypeAliasedPrimativeWithSetter(t *testing.T) {
-	t.SkipNow()
-
-	os.Setenv("PROP", "1234")
-
-	config := struct {
-		Prop stringSlice `env:"PROP"`
-	}{}
-
-	ErrorNil(t, Set(&config))
-	fmt.Println(config.Prop)
-	Equals(t, stringSlice{"a", "b", "c"}, config.Prop)
-}
-
-type stringSlice []string
-
-func (s stringSlice) Set(value string) (err error) {
-	slice := strings.Split(value, ",")
-	s = stringSlice(slice)
-	return
-}
-
 func TestEnvCustomTypeStruct(t *testing.T) {
 	os.Setenv("PROP", "3h2m1s")
 

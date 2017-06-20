@@ -68,7 +68,7 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 	// if the field is unexported or just not settable, bail at
 	// this point because all subsequent operations will fail.
 	if !v.CanSet() {
-		return fmt.Errorf("field cannot be set")
+		return fmt.Errorf("field '%s' cannot be set", t.Name)
 	}
 
 	// if field implements the Setter interface, invoke it now and
@@ -82,6 +82,7 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 		if err = setter.Set(env); err != nil {
 			return errors.Wrapf(err, "error in custom setter")
 		}
+		return
 	}
 
 	if err = setField(v, env); err != nil {

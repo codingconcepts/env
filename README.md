@@ -38,10 +38,3 @@ func main() {
 	...
 }
 ```
-
-## Todos
-
-Allow user to override Set method for:
-
-- [x] Structs
-- [ ] Slices
