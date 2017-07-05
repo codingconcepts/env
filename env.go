@@ -126,33 +126,13 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 func setField(fieldValue reflect.Value, value string) (err error) {
 	switch fieldValue.Kind() {
 	case reflect.Bool:
-		b, err := strconv.ParseBool(value)
-		if err != nil {
-			return err
-		}
-		fieldValue.SetBool(b)
-
+		return setBool(fieldValue, value)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		i, err := strconv.ParseInt(value, 0, 64)
-		if err != nil {
-			return err
-		}
-		fieldValue.SetInt(int64(i))
-
+		return setInt(fieldValue, value)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		i, err := strconv.ParseUint(value, 0, 64)
-		if err != nil {
-			return err
-		}
-		fieldValue.SetUint(uint64(i))
-
+		return setUint(fieldValue, value)
 	case reflect.Float32, reflect.Float64:
-		f, err := strconv.ParseFloat(value, 64)
-		if err != nil {
-			return err
-		}
-		fieldValue.SetFloat(f)
-
+		return setFloat(fieldValue, value)
 	case reflect.String:
 		fieldValue.SetString(value)
 	}

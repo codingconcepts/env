@@ -24,9 +24,10 @@ import (
 )
 
 type awsConfig struct {
-	ID     string `env:"AWS_ACCESS_KEY_ID" required:"true"`
-	Secret string `env:"AWS_SECRET_ACCESS_KEY" required:"true"`
-	Region string `env:"AWS_REGION"`
+	ID                string `env:"AWS_ACCESS_KEY_ID" required:"true"`
+	Secret            string `env:"AWS_SECRET_ACCESS_KEY" required:"true"`
+	Region            string `env:"AWS_REGION"`
+	ConnectionTimeout time.Duration `env:"CONNECTION_TIMEOUT"`
 }
 
 func main() {
@@ -46,3 +47,4 @@ Env currently supports the following data types.  If you'd like to have more, pl
 - int, int8, int16, int32, int64
 - uint, uint8, uint16, uint32, uint64
 - float32, float64
+- time.Duration

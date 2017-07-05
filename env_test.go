@@ -177,6 +177,17 @@ func TestEnvString(t *testing.T) {
 	Equals(t, "}D-Z2P£T!E*#zE=.gc@", config.Prop)
 }
 
+func TestEnvDuration(t *testing.T) {
+	os.Setenv("PROP", "1m30s")
+
+	config := struct {
+		Prop time.Duration `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, "1m30s", config.Prop.String())
+}
+
 func TestEnvSetUnexportedProperty(t *testing.T) {
 	os.Setenv("PROP", "hello")
 
@@ -321,6 +332,7 @@ func TestEnvCustomTypeAliasedPrimativeWithoutSetter(t *testing.T) {
 }
 
 type myInt int16
+
 func TestEnvCustomTypeStruct(t *testing.T) {
 	os.Setenv("PROP", "3h2m1s")
 
