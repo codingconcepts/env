@@ -341,6 +341,18 @@ func TestInvalidConfigurationForFloatType(t *testing.T) {
 	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
 }
 
+func TestInvalidConfigurationForDuration(t *testing.T) {
+	os.Setenv("PROP", "1hh")
+
+	config := struct {
+		Prop time.Duration `env:"PROP"`
+	}{}
+
+	err := Set(&config)
+	ErrorNotNil(t, err)
+	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+}
+
 func TestEnvNonPointer(t *testing.T) {
 	config := struct {
 		Prop float32 `env:"PROP"`
