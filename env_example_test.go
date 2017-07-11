@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func ExampleEnv() {
+func ExampleSet() {
 	os.Setenv("PROP_A", "value a")
 	os.Setenv("PROP_B", "42")
 
