@@ -14,8 +14,8 @@ func ExampleSet() {
 		PropB int16  `env:"PROP_B"`
 	}{}
 
-	Set(&config)
+	err := Set(&config)
 
-	fmt.Println(config)
-	// OUTPUT: {value a 42}
+	fmt.Println(config, err)
+	// OUTPUT: {value a 42} <nil>
 }
