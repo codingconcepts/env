@@ -240,6 +240,37 @@ func TestEnvRequiredWhenMissing(t *testing.T) {
 	ErrorNotNil(t, err)
 }
 
+func TestEnvWithDefaultWhenProvided(t *testing.T) {
+	os.Setenv("PROP", "goodbye")
+
+	config := struct {
+		Prop string `env:"PROP" default:"hello"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, "goodbye", config.Prop)
+}
+
+func TestEnvWithDefaultWhenMissing(t *testing.T) {
+	os.Unsetenv("PROP")
+
+	config := struct {
+		Prop string `env:"PROP" default:"hello"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, "hello", config.Prop)
+}
+
+func TestEnvRequiredWithDefaultWhenMissing(t *testing.T) {
+	config := struct {
+		Prop string `env:"PROP" required:"true" default:"hello"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, "hello", config.Prop)
+}
+
 func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
 	os.Unsetenv("PROP")
 

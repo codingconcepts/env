@@ -57,20 +57,33 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 		return
 	}
 
-	env, ok := os.LookupEnv(envTag)
-	if !ok {
-		// an env tag has been provided but a matching environment
-		// variable cannot be found, determine if we should return
-		// an error or if a missing variable is ok/expected.
-		return processMissing(t, envTag, configTypeEnvironment)
-	}
-
 	// if the field is unexported or just not settable, bail at
 	// this point because all subsequent operations will fail.
 	if !v.CanSet() {
 		return fmt.Errorf("field '%s' cannot be set", t.Name)
 	}
 
+	// lookup the environment variable and if found, set and
+	// return
+	env, ok := os.LookupEnv(envTag)
+	if ok {
+		return setField(t, v, env)
+	}
+
+	// if the value isn't found in the environment, look for a
+	// user-defined default value
+	d, ok := t.Tag.Lookup("default")
+	if ok {
+		return setField(t, v, d)
+	}
+
+	// an env tag has been provided but a matching environment
+	// variable cannot be found, determine if we should return
+	// an error or if a missing variable is ok/expected.
+	return processMissing(t, envTag, configTypeEnvironment)
+}
+
+func setField(t reflect.StructField, v reflect.Value, value string) (err error) {
 	// if field implements the Setter interface, invoke it now and
 	// don't continue attempting to set the primative values.
 	if _, ok := v.Interface().(Setter); ok {
@@ -79,17 +92,36 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 
 		// re-assert the type with the newed-up instance and call.
 		setter := v.Interface().(Setter)
-		if err = setter.Set(env); err != nil {
+		if err = setter.Set(value); err != nil {
 			return errors.Wrapf(err, "error in custom setter")
 		}
 		return
 	}
 
-	if err = setField(v, env); err != nil {
+	if err = setBuiltInField(v, value); err != nil {
 		return errors.Wrapf(err, "error setting %s", t.Name)
 	}
 
 	return
+}
+
+// setField determines a field's type and parses the given value
+// accordingly.  An error will be returned if the field is unexported.
+func setBuiltInField(fieldValue reflect.Value, value string) (err error) {
+	switch fieldValue.Kind() {
+	case reflect.Bool:
+		return setBool(fieldValue, value)
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return setInt(fieldValue, value)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return setUint(fieldValue, value)
+	case reflect.Float32, reflect.Float64:
+		return setFloat(fieldValue, value)
+	case reflect.String:
+		fieldValue.SetString(value)
+	}
+
+	return nil
 }
 
 // processMissing returns an error if a required tag is found
@@ -119,23 +151,4 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 	}
 
 	return
-}
-
-// setField determines a field's type and parses the given value
-// accordingly.  An error will be returned if the field is unexported.
-func setField(fieldValue reflect.Value, value string) (err error) {
-	switch fieldValue.Kind() {
-	case reflect.Bool:
-		return setBool(fieldValue, value)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return setInt(fieldValue, value)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return setUint(fieldValue, value)
-	case reflect.Float32, reflect.Float64:
-		return setFloat(fieldValue, value)
-	case reflect.String:
-		fieldValue.SetString(value)
-	}
-
-	return nil
 }
