@@ -24,9 +24,9 @@ import (
 )
 
 type awsConfig struct {
-	ID                string `env:"AWS_ACCESS_KEY_ID" required:"true"`
-	Secret            string `env:"AWS_SECRET_ACCESS_KEY" required:"true"`
-	Region            string `env:"AWS_REGION"`
+	ID                string        `env:"AWS_ACCESS_KEY_ID" required:"true"`
+	Secret            string        `env:"AWS_SECRET_ACCESS_KEY" required:"true"`
+	Region            string        `env:"AWS_REGION"`
 	ConnectionTimeout time.Duration `env:"CONNECTION_TIMEOUT"`
 }
 
