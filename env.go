@@ -98,6 +98,12 @@ func setField(t reflect.StructField, v reflect.Value, value string) (err error) 
 		return
 	}
 
+	// if the given type is a slice, create a slice and return,
+	// otherwise, we're dealing with a primitive type
+	if v.Kind() == reflect.Slice {
+		return setSlice(t, v, value)
+	}
+
 	if err = setBuiltInField(v, value); err != nil {
 		return errors.Wrapf(err, "error setting %s", t.Name)
 	}

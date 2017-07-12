@@ -3,6 +3,7 @@ package env
 import (
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -57,5 +58,25 @@ func setDuration(fieldValue reflect.Value, value string) (err error) {
 	}
 
 	fieldValue.SetInt(d.Nanoseconds())
+	return
+}
+
+func setSlice(t reflect.StructField, v reflect.Value, value string) (err error) {
+	switch v.Type() {
+	case reflect.TypeOf([]string{}):
+		out := setStringSlice(v, value)
+		v.Set(out)
+		return
+	}
+	return
+}
+
+func setStringSlice(v reflect.Value, value string) (out reflect.Value) {
+	out = reflect.MakeSlice(reflect.TypeOf([]string{}), 0, 0)
+
+	for _, part := range strings.Split(value, ",") {
+		out = reflect.Append(out, reflect.ValueOf(strings.Trim(part, " ")))
+	}
+
 	return
 }

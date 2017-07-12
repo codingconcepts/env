@@ -48,3 +48,7 @@ Env currently supports the following data types.  If you'd like to have more, pl
 - uint, uint8, uint16, uint32, uint64
 - float32, float64
 - time.Duration
+
+## Todo
+
+- [ ] Allow user to provide custom delimiter for slice types

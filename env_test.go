@@ -188,6 +188,16 @@ func TestEnvDuration(t *testing.T) {
 	Equals(t, "1m30s", config.Prop.String())
 }
 
+func TestEnvSlice(t *testing.T) {
+	os.Setenv("PROPS", "a, b, c")
+	config := struct {
+		Items []string `env:"PROPS"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []string{"a", "b", "c"}, config.Items)
+}
+
 func TestEnvSetUnexportedProperty(t *testing.T) {
 	os.Setenv("PROP", "hello")
 
