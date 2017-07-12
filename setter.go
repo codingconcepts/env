@@ -1,11 +1,31 @@
 package env
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 )
+
+// setField determines a field's type and parses the given value
+// accordingly.  An error will be returned if the field is unexported.
+func setBuiltInField(fieldValue reflect.Value, value string) (err error) {
+	switch fieldValue.Kind() {
+	case reflect.Bool:
+		return setBool(fieldValue, value)
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return setInt(fieldValue, value)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return setUint(fieldValue, value)
+	case reflect.Float32, reflect.Float64:
+		return setFloat(fieldValue, value)
+	case reflect.String:
+		return setString(fieldValue, value)
+	}
+
+	return nil
+}
 
 func setBool(fieldValue reflect.Value, value string) (err error) {
 	var b bool
@@ -61,21 +81,73 @@ func setDuration(fieldValue reflect.Value, value string) (err error) {
 	return
 }
 
+func setString(fieldValue reflect.Value, value string) (err error) {
+	fieldValue.SetString(value)
+	return
+}
+
 func setSlice(t reflect.StructField, v reflect.Value, value string) (err error) {
+	rawValues := split(value)
+
+	sliceValue, err := makeSlice(v, len(rawValues))
+	if err != nil {
+		return
+	}
+
+	populateSlice(sliceValue, rawValues)
+	v.Set(sliceValue)
+
+	return
+}
+
+func makeSlice(v reflect.Value, n int) (slice reflect.Value, err error) {
 	switch v.Type() {
 	case reflect.TypeOf([]string{}):
-		out := setStringSlice(v, value)
-		v.Set(out)
-		return
+		slice = reflect.MakeSlice(reflect.TypeOf([]string{}), n, n)
+	case reflect.TypeOf([]bool{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]bool{}), n, n)
+	case reflect.TypeOf([]int{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]int{}), n, n)
+	case reflect.TypeOf([]int8{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]int8{}), n, n)
+	case reflect.TypeOf([]int16{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]int16{}), n, n)
+	case reflect.TypeOf([]int32{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]int32{}), n, n)
+	case reflect.TypeOf([]int64{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]int64{}), n, n)
+	case reflect.TypeOf([]uint{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]uint{}), n, n)
+	case reflect.TypeOf([]uint8{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]uint8{}), n, n)
+	case reflect.TypeOf([]uint16{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]uint16{}), n, n)
+	case reflect.TypeOf([]uint32{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]uint32{}), n, n)
+	case reflect.TypeOf([]uint64{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]uint64{}), n, n)
+	case reflect.TypeOf([]float32{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]float32{}), n, n)
+	case reflect.TypeOf([]float64{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]float64{}), n, n)
+	case reflect.TypeOf([]time.Duration{}):
+		slice = reflect.MakeSlice(reflect.TypeOf([]time.Duration{}), n, n)
+	default:
+		err = fmt.Errorf("%v is not supported", v.Type())
 	}
 	return
 }
 
-func setStringSlice(v reflect.Value, value string) (out reflect.Value) {
-	out = reflect.MakeSlice(reflect.TypeOf([]string{}), 0, 0)
+func populateSlice(sliceValue reflect.Value, rawItems []string) {
+	for i, item := range rawItems {
+		setBuiltInField(sliceValue.Index(i), item)
+	}
+}
 
-	for _, part := range strings.Split(value, ",") {
-		out = reflect.Append(out, reflect.ValueOf(strings.Trim(part, " ")))
+func split(value string) (out []string) {
+	out = strings.Split(value, ",")
+	for i, s := range out {
+		out[i] = strings.Trim(s, " ")
 	}
 
 	return

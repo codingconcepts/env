@@ -42,15 +42,13 @@ func main() {
 
 Env currently supports the following data types.  If you'd like to have more, please get in touch or feel free to create a pull request:
 
-- bool
-- string
-- int, int8, int16, int32, int64
-- uint, uint8, uint16, uint32, uint64
-- float32, float64
-- time.Duration
+- bool and []bool
+- string and []string
+- int, int8, int16, int32, int64 and all slice equivalents
+- uint, uint8, uint16, uint32, uint64 and all slice equivalents
+- float32, float64 and all slice equivalents
+- time.Duration and []time.Duration
 
 ## Todo
 
-- [ ] Support all types of slices
-- [ ] Allow user to provide custom delimiter for slice types
-- [ ] Reuse setter methods for individual slice items
+- [ ] Allow user to provide custom delimiter for slice types (environment config might be unchangeable)

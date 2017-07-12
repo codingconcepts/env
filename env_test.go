@@ -188,7 +188,17 @@ func TestEnvDuration(t *testing.T) {
 	Equals(t, "1m30s", config.Prop.String())
 }
 
-func TestEnvSlice(t *testing.T) {
+func TestEnvBoolSlice(t *testing.T) {
+	os.Setenv("PROPS", "true, false, true")
+	config := struct {
+		Items []bool `env:"PROPS"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []bool{true, false, true}, config.Items)
+}
+
+func TestEnvStringSlice(t *testing.T) {
 	os.Setenv("PROPS", "a, b, c")
 	config := struct {
 		Items []string `env:"PROPS"`
@@ -196,6 +206,79 @@ func TestEnvSlice(t *testing.T) {
 
 	ErrorNil(t, Set(&config))
 	Equals(t, []string{"a", "b", "c"}, config.Items)
+}
+
+func TestEnvIntegerSlices(t *testing.T) {
+	os.Setenv("PROP", "1, 2, 3")
+
+	config := struct {
+		PropInt   []int   `env:"PROP"`
+		PropInt8  []int8  `env:"PROP"`
+		PropInt16 []int16 `env:"PROP"`
+		PropInt32 []int32 `env:"PROP"`
+		PropInt64 []int64 `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []int{1, 2, 3}, config.PropInt)
+	Equals(t, []int8{1, 2, 3}, config.PropInt8)
+	Equals(t, []int16{1, 2, 3}, config.PropInt16)
+	Equals(t, []int32{1, 2, 3}, config.PropInt32)
+	Equals(t, []int64{1, 2, 3}, config.PropInt64)
+}
+
+func TestEnvUnsignedIntegerSlices(t *testing.T) {
+	os.Setenv("PROP", "1, 2, 3")
+
+	config := struct {
+		PropUint   []uint   `env:"PROP"`
+		PropUint8  []uint8  `env:"PROP"`
+		PropUint16 []uint16 `env:"PROP"`
+		PropUint32 []uint32 `env:"PROP"`
+		PropUint64 []uint64 `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []uint{1, 2, 3}, config.PropUint)
+	Equals(t, []uint8{1, 2, 3}, config.PropUint8)
+	Equals(t, []uint16{1, 2, 3}, config.PropUint16)
+	Equals(t, []uint32{1, 2, 3}, config.PropUint32)
+	Equals(t, []uint64{1, 2, 3}, config.PropUint64)
+}
+
+func TestEnvFloatSlices(t *testing.T) {
+	os.Setenv("PROP", "1.23, 2.34, 3.45")
+
+	config := struct {
+		PropFloat32 []float32 `env:"PROP"`
+		PropFloat64 []float64 `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []float32{1.23, 2.34, 3.45}, config.PropFloat32)
+	Equals(t, []float64{1.23, 2.34, 3.45}, config.PropFloat64)
+}
+
+func TestEnvDurationSlice(t *testing.T) {
+	os.Setenv("PROP", "1s, 2s, 4s")
+
+	config := struct {
+		Prop []time.Duration `env:"PROP"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []time.Duration{time.Second, time.Second * 2, time.Second * 4}, config.Prop)
+}
+
+func TestEnvUnsupportedBoolSlice(t *testing.T) {
+	os.Setenv("PROPS", "true, false, true")
+	config := struct {
+		Items []chan int `env:"PROPS"`
+	}{}
+
+	err := Set(&config)
+	ErrorNotNil(t, err)
+	Assert(t, "[]chan int is not supported" == err.Error())
 }
 
 func TestEnvSetUnexportedProperty(t *testing.T) {

@@ -111,25 +111,6 @@ func setField(t reflect.StructField, v reflect.Value, value string) (err error) 
 	return
 }
 
-// setField determines a field's type and parses the given value
-// accordingly.  An error will be returned if the field is unexported.
-func setBuiltInField(fieldValue reflect.Value, value string) (err error) {
-	switch fieldValue.Kind() {
-	case reflect.Bool:
-		return setBool(fieldValue, value)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return setInt(fieldValue, value)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return setUint(fieldValue, value)
-	case reflect.Float32, reflect.Float64:
-		return setFloat(fieldValue, value)
-	case reflect.String:
-		fieldValue.SetString(value)
-	}
-
-	return nil
-}
-
 // processMissing returns an error if a required tag is found
 // and is set to true.  A different error will be returned if
 // the required tag was present but the value could not be parsed
