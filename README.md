@@ -51,5 +51,6 @@ Env currently supports the following data types.  If you'd like to have more, pl
 
 ## Todo
 
+- [ ] Support all types of slices
 - [ ] Allow user to provide custom delimiter for slice types
 - [ ] Reuse setter methods for individual slice items
