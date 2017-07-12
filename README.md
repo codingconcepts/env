@@ -19,15 +19,17 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/codingconcepts/env"
 )
 
 type awsConfig struct {
-	ID                string        `env:"AWS_ACCESS_KEY_ID" required:"true"`
-	Secret            string        `env:"AWS_SECRET_ACCESS_KEY" required:"true"`
-	Region            string        `env:"AWS_REGION"`
-	ConnectionTimeout time.Duration `env:"CONNECTION_TIMEOUT"`
+	Secret            string        `env:"SECRET" required:"true"`
+	Region            string        `env:"REGION"`
+	Port              int           `env:"PORT" required:"true"`
+	Peers             []string      `env:"PEERS"`
+	ConnectionTimeout time.Duration `env:"TIMEOUT"`
 }
 
 func main() {
@@ -38,6 +40,10 @@ func main() {
 
 	...
 }
+```
+
+``` bash
+$ ID=1 SECRET=shh PORT=1234 PEERS=localhost:1235,localhost:1236 TIMEOUT=5s go run main.go
 ```
 
 Env currently supports the following data types.  If you'd like to have more, please get in touch or feel free to create a pull request:
