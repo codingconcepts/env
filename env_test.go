@@ -364,6 +364,17 @@ func TestEnvRequiredWithDefaultWhenMissing(t *testing.T) {
 	Equals(t, "hello", config.Prop)
 }
 
+func TestEnvCustomDelimiter(t *testing.T) {
+	os.Setenv("PROP", "a b c")
+
+	config := struct {
+		Prop []string `env:"PROP" delimiter:" "`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, []string{"a", "b", "c"}, config.Prop)
+}
+
 func TestEnvNotRequiredImplicitWhenMissing(t *testing.T) {
 	os.Unsetenv("PROP")
 

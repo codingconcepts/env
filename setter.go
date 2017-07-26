@@ -87,7 +87,10 @@ func setString(fieldValue reflect.Value, value string) (err error) {
 }
 
 func setSlice(t reflect.StructField, v reflect.Value, value string) (err error) {
-	rawValues := split(value)
+	// allow the user to provide their own delimiter, falling back to a
+	// comma if one isn't provided.
+	delimiter := getDelimiter(t)
+	rawValues := split(value, delimiter)
 
 	sliceValue, err := makeSlice(v, len(rawValues))
 	if err != nil {
@@ -144,11 +147,18 @@ func populateSlice(sliceValue reflect.Value, rawItems []string) {
 	}
 }
 
-func split(value string) (out []string) {
-	out = strings.Split(value, ",")
+func split(value string, delimeter string) (out []string) {
+	out = strings.Split(value, delimeter)
 	for i, s := range out {
 		out[i] = strings.Trim(s, " ")
 	}
 
 	return
+}
+
+func getDelimiter(t reflect.StructField) (d string) {
+	if d, ok := t.Tag.Lookup("delimiter"); ok {
+		return d
+	}
+	return ","
 }
