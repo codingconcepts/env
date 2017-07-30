@@ -54,7 +54,3 @@ Env currently supports the following data types.  If you'd like to have more, pl
 - uint, uint8, uint16, uint32, uint64 and all slice equivalents
 - float32, float64 and all slice equivalents
 - time.Duration and []time.Duration
-
-## Todo
-
-- [ ] Allow user to provide custom delimiter for slice types (environment config might be unchangeable)
