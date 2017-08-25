@@ -28,7 +28,7 @@ type Setter interface {
 func Set(i interface{}) (err error) {
 	v := reflect.ValueOf(i)
 
-	// don't try to process a non-pointer value
+	// don't try to process a non-pointer value.
 	if v.Kind() != reflect.Ptr || v.IsNil() {
 		return fmt.Errorf("%s is not a pointer", v.Kind())
 	}
@@ -52,13 +52,11 @@ func Set(i interface{}) (err error) {
 func processField(t reflect.StructField, v reflect.Value) (err error) {
 	envTag, ok := t.Tag.Lookup("env")
 	if !ok {
-		// if the env tag isn't found, don't attempt to set a
-		// value for the field.
 		return
 	}
 
 	// if the field is unexported or just not settable, bail at
-	// this point because all subsequent operations will fail.
+	// this point because subsequent operations will fail.
 	if !v.CanSet() {
 		return fmt.Errorf("field '%s' cannot be set", t.Name)
 	}

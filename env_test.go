@@ -188,6 +188,18 @@ func TestEnvDuration(t *testing.T) {
 	Equals(t, "1m30s", config.Prop.String())
 }
 
+func TestEnvUnsupportedType(t *testing.T) {
+	os.Setenv("PROP", "1")
+
+	config := struct {
+		Prop chan int `env:"PROP"`
+	}{}
+
+	err := Set(&config)
+	ErrorNotNil(t, err)
+	Equals(t, "error setting Prop: chan is not supported", err.Error())
+}
+
 func TestEnvBoolSlice(t *testing.T) {
 	os.Setenv("PROPS", "true, false, true")
 	config := struct {
@@ -291,6 +303,18 @@ func TestEnvSetUnexportedProperty(t *testing.T) {
 	err := Set(&config)
 	ErrorNotNil(t, err)
 	Assert(t, strings.Contains(err.Error(), "field 'prop' cannot be set"))
+}
+
+func TestEnvUnsupportedPropertyWithoutTag(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop  string `env:"PROP"`
+		Prop2 chan int
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, "hello", config.Prop)
 }
 
 func TestInvalidValueForRequiredTag(t *testing.T) {

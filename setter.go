@@ -22,9 +22,9 @@ func setBuiltInField(fieldValue reflect.Value, value string) (err error) {
 		return setFloat(fieldValue, value)
 	case reflect.String:
 		return setString(fieldValue, value)
+	default:
+		return fmt.Errorf("%s is not supported", fieldValue.Kind())
 	}
-
-	return nil
 }
 
 func setBool(fieldValue reflect.Value, value string) (err error) {
