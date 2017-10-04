@@ -54,3 +54,13 @@ Env currently supports the following data types.  If you'd like to have more, pl
 - uint, uint8, uint16, uint32, uint64 and all slice equivalents
 - float32, float64 and all slice equivalents
 - time.Duration and []time.Duration
+
+### Default Values
+
+You are able to specifiy a default value for a field. This value will be used if the provided environmental variable is not found. Be sure not to make the field required if you have provided a default!
+
+``` go
+type config struct {
+	Address string `env:"ADDRESS" default:"0.0.0.0"`
+}
+```
