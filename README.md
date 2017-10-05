@@ -57,7 +57,7 @@ Env currently supports the following data types.  If you'd like to have more, pl
 
 ### Default Values
 
-You are able to specifiy a default value for a field. This value will be used if the provided environmental variable is not found. Be sure not to make the field required if you have provided a default!
+If a field isn't required, it's also possible to specify a default value:
 
 ``` go
 type config struct {
