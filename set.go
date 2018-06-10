@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+var (
+	binaryType = reflect.TypeOf([]uint8{})
+)
+
 // setField determines a field's type and parses the given value
 // accordingly.  An error will be returned if the field is unexported.
 func setBuiltInField(fieldValue reflect.Value, value string) (err error) {
@@ -87,7 +91,14 @@ func setString(fieldValue reflect.Value, value string) (err error) {
 }
 
 func setSlice(t reflect.StructField, v reflect.Value, value string) (err error) {
-	// allow the user to provide their own delimiter, falling back to a
+	// []uint8 and []byte are special cases, as they can be used to store
+	// binary data, which we'll favour over storing comma-separated uint8s.
+	if t.Type == binaryType {
+		v.SetBytes([]byte(value))
+		return
+	}
+
+	// Allow the user to provide their own delimiter, falling back to a
 	// comma if one isn't provided.
 	delimiter := getDelimiter(t)
 	rawValues := split(value, delimiter)

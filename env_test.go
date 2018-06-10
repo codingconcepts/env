@@ -200,6 +200,18 @@ func TestEnvUnsupportedType(t *testing.T) {
 	Equals(t, "error setting Prop: chan is not supported", err.Error())
 }
 
+func TestByteSlice(t *testing.T) {
+	os.Setenv("PROP", "hello")
+
+	config := struct {
+		Prop []byte `env:"PROP"`
+	}{}
+
+	err := Set(&config)
+	ErrorNil(t, err)
+	Equals(t, "hello", string(config.Prop))
+}
+
 func TestEnvBoolSlice(t *testing.T) {
 	os.Setenv("PROPS", "true, false, true")
 	config := struct {
@@ -244,7 +256,6 @@ func TestEnvUnsignedIntegerSlices(t *testing.T) {
 
 	config := struct {
 		PropUint   []uint   `env:"PROP"`
-		PropUint8  []uint8  `env:"PROP"`
 		PropUint16 []uint16 `env:"PROP"`
 		PropUint32 []uint32 `env:"PROP"`
 		PropUint64 []uint64 `env:"PROP"`
@@ -252,7 +263,6 @@ func TestEnvUnsignedIntegerSlices(t *testing.T) {
 
 	ErrorNil(t, Set(&config))
 	Equals(t, []uint{1, 2, 3}, config.PropUint)
-	Equals(t, []uint8{1, 2, 3}, config.PropUint8)
 	Equals(t, []uint16{1, 2, 3}, config.PropUint16)
 	Equals(t, []uint32{1, 2, 3}, config.PropUint32)
 	Equals(t, []uint64{1, 2, 3}, config.PropUint64)
