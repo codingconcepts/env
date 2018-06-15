@@ -5,8 +5,6 @@ import (
 	"os"
 	"reflect"
 	"strconv"
-
-	"github.com/pkg/errors"
 )
 
 type configType string
@@ -91,7 +89,7 @@ func setField(t reflect.StructField, v reflect.Value, value string) (err error) 
 		// Re-assert the type with the newed-up instance and call.
 		setter := v.Interface().(Setter)
 		if err = setter.Set(value); err != nil {
-			return errors.Wrapf(err, "error in custom setter")
+			return fmt.Errorf("error in custom setter: %v", err)
 		}
 		return
 	}
@@ -103,7 +101,7 @@ func setField(t reflect.StructField, v reflect.Value, value string) (err error) 
 	}
 
 	if err = setBuiltInField(v, value); err != nil {
-		return errors.Wrapf(err, "error setting %s", t.Name)
+		return fmt.Errorf("error setting %q: %v", t.Name, err)
 	}
 
 	return
@@ -125,7 +123,7 @@ func processMissing(t reflect.StructField, envTag string, ct configType) (err er
 	if b, err = strconv.ParseBool(reqTag); err != nil {
 		// The value provided for the required tag is not a valid
 		// Boolean, so inform the user.
-		return errors.Wrapf(err, fmt.Sprintf("invalid required tag '%s'", reqTag))
+		return fmt.Errorf("invalid required tag %q: %v", reqTag, err)
 	}
 
 	if b {

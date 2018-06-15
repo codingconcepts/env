@@ -197,7 +197,7 @@ func TestEnvUnsupportedType(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Equals(t, "error setting Prop: chan is not supported", err.Error())
+	Equals(t, `error setting "Prop": chan is not supported`, err.Error())
 }
 
 func TestByteSlice(t *testing.T) {
@@ -336,7 +336,7 @@ func TestInvalidValueForRequiredTag(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "invalid required tag 'invalid'"))
+	Equals(t, `invalid required tag "invalid": strconv.ParseBool: parsing "invalid": invalid syntax`, err.Error())
 }
 
 func TestEnvNoEnvTag(t *testing.T) {
@@ -440,7 +440,7 @@ func TestInvalidConfigurationForBoolType(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	Equals(t, `error setting "Prop": strconv.ParseBool: parsing "hello": invalid syntax`, err.Error())
 }
 
 func TestInvalidConfigurationForIntType(t *testing.T) {
@@ -452,7 +452,7 @@ func TestInvalidConfigurationForIntType(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	Equals(t, `error setting "Prop": strconv.ParseInt: parsing "hello": invalid syntax`, err.Error())
 }
 
 func TestInvalidConfigurationForUintType(t *testing.T) {
@@ -464,7 +464,7 @@ func TestInvalidConfigurationForUintType(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	Equals(t, `error setting "Prop": strconv.ParseUint: parsing "hello": invalid syntax`, err.Error())
 }
 
 func TestInvalidConfigurationForFloatType(t *testing.T) {
@@ -476,7 +476,7 @@ func TestInvalidConfigurationForFloatType(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	Equals(t, `error setting "Prop": strconv.ParseFloat: parsing "hello": invalid syntax`, err.Error())
 }
 
 func TestInvalidConfigurationForDuration(t *testing.T) {
@@ -488,7 +488,7 @@ func TestInvalidConfigurationForDuration(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Assert(t, strings.HasPrefix(err.Error(), "error setting Prop"))
+	Equals(t, `error setting "Prop": time: unknown unit hh in duration 1hh`, err.Error())
 }
 
 func TestEnvNonPointer(t *testing.T) {
