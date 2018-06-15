@@ -1,45 +1,38 @@
 package env
 
 import (
-	"fmt"
-	"path/filepath"
 	"reflect"
-	"runtime"
 	"testing"
 )
 
 // Assert fails the test if the condition is false.
-func Assert(tb testing.TB, condition bool, v ...interface{}) {
+func Assert(tb testing.TB, condition bool) {
+	tb.Helper()
 	if !condition {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("%s:%d:\n\n", append([]interface{}{filepath.Base(file), line}, v...)...)
-		tb.FailNow()
+		tb.Fatal("assertion failed")
 	}
 }
 
 // ErrorNil fails the test if an err is not nil.
 func ErrorNil(tb testing.TB, err error) {
+	tb.Helper()
 	if err != nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("%s:%d: unexpected error: %s\n\n", filepath.Base(file), line, err.Error())
-		tb.FailNow()
+		tb.Fatalf("unexpected error: %s", err.Error())
 	}
 }
 
 // ErrorNotNil fails the test if an err is not nil.
 func ErrorNotNil(tb testing.TB, err error) {
+	tb.Helper()
 	if err == nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("%s:%d: expected error but got none\n\n", filepath.Base(file), line)
-		tb.FailNow()
+		tb.Fatalf("\nexpected error but got none")
 	}
 }
 
 // Equals fails the test if expected is not equal to actual.
-func Equals(tb testing.TB, expected, actual interface{}) {
-	if !reflect.DeepEqual(expected, actual) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\n\n", filepath.Base(file), line, expected, actual)
-		tb.FailNow()
+func Equals(tb testing.TB, exp, act interface{}) {
+	tb.Helper()
+	if !reflect.DeepEqual(exp, act) {
+		tb.Fatalf("\nexp:\t%[1]v (%[1]T)\ngot:\t%[2]v (%[2]T)", exp, act)
 	}
 }
