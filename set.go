@@ -132,8 +132,6 @@ func makeSlice(v reflect.Value, n int) (slice reflect.Value, err error) {
 		slice = reflect.MakeSlice(reflect.TypeOf([]int64{}), n, n)
 	case reflect.TypeOf([]uint{}):
 		slice = reflect.MakeSlice(reflect.TypeOf([]uint{}), n, n)
-	case reflect.TypeOf([]uint8{}):
-		slice = reflect.MakeSlice(reflect.TypeOf([]uint8{}), n, n)
 	case reflect.TypeOf([]uint16{}):
 		slice = reflect.MakeSlice(reflect.TypeOf([]uint16{}), n, n)
 	case reflect.TypeOf([]uint32{}):

@@ -25,7 +25,7 @@ import (
 )
 
 type awsConfig struct {
-	Secret            string        `env:"SECRET" required:"true"`
+	Secret            []byte        `env:"SECRET" required:"true"`
 	Region            string        `env:"REGION"`
 	Port              int           `env:"PORT" required:"true"`
 	Peers             []string      `env:"PEERS"`
@@ -50,6 +50,7 @@ Env currently supports the following data types.  If you'd like to have more, pl
 
 - bool and []bool
 - string and []string
+- []byte
 - int, int8, int16, int32, int64 and all slice equivalents
 - uint, uint8, uint16, uint32, uint64 and all slice equivalents
 - float32, float64 and all slice equivalents
