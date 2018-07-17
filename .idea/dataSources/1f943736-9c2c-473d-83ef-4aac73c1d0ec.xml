@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="service">
+  <database-model serializer="dbm" rdbms="POSTGRES" format-version="4.7">
+    <root id="1"/>
+    <database id="2" parent="1" name="service">
+      <ObjectId>3213742346</ObjectId>
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </database>
+    <database id="3" parent="1" name="crdb_internal">
+      <ObjectId>2107984548</ObjectId>
+    </database>
+    <database id="4" parent="1" name="pg_catalog">
+      <ObjectId>2157629366</ObjectId>
+    </database>
+    <database id="5" parent="1" name="information_schema">
+      <ObjectId>3177026209</ObjectId>
+    </database>
+    <schema id="6" parent="2" name="service">
+      <ObjectId>2707552155</ObjectId>
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="7" parent="2" name="information_schema">
+      <ObjectId>719671438</ObjectId>
+    </schema>
+    <schema id="8" parent="2" name="pg_catalog">
+      <ObjectId>1782195457</ObjectId>
+    </schema>
+    <schema id="9" parent="2" name="crdb_internal">
+      <ObjectId>2699457641</ObjectId>
+    </schema>
+  </database-model>
+</dataSource>

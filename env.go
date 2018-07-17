@@ -81,7 +81,7 @@ func processField(t reflect.StructField, v reflect.Value) (err error) {
 
 func setField(t reflect.StructField, v reflect.Value, value string) (err error) {
 	// If field implements the Setter interface, invoke it now and
-	// don't continue attempting to set the primative values.
+	// don't continue attempting to set the primitive values.
 	if _, ok := v.Interface().(Setter); ok {
 		instance := reflect.New(t.Type.Elem())
 		v.Set(instance)

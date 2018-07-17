@@ -501,7 +501,7 @@ func TestEnvNonPointer(t *testing.T) {
 	Equals(t, err.Error(), "struct is not a pointer")
 }
 
-func TestEnvCustomTypeAliasedPrimativeWithoutSetter(t *testing.T) {
+func TestEnvCustomTypeAliasedPrimitiveWithoutSetter(t *testing.T) {
 	os.Setenv("PROP", "1234")
 
 	config := struct {
