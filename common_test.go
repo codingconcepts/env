@@ -1,7 +1,9 @@
 package env
 
 import (
+	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -34,5 +36,12 @@ func Equals(tb testing.TB, exp, act interface{}) {
 	tb.Helper()
 	if !reflect.DeepEqual(exp, act) {
 		tb.Fatalf("\nexp:\t%[1]v (%[1]T)\ngot:\t%[2]v (%[2]T)", exp, act)
+	}
+}
+
+func unsetEnvironment() {
+	for _, e := range os.Environ() {
+		kvp := strings.Split(e, "=")
+		os.Unsetenv(kvp[0])
 	}
 }

@@ -379,23 +379,139 @@ func TestEnvWithDefaultWhenProvided(t *testing.T) {
 }
 
 func TestEnvWithDefaultWhenMissing(t *testing.T) {
-	os.Unsetenv("PROP")
+	unsetEnvironment()
 
 	config := struct {
-		Prop string `env:"PROP" default:"hello"`
+		BoolProp      bool            `env:"MISSING" default:"true"`
+		BoolsProp     []bool          `env:"MISSING" default:"true,false,true"`
+		StringProp    string          `env:"MISSING" default:"a"`
+		StringsProp   []string        `env:"MISSING" default:"a,b,c"`
+		BytesProp     []byte          `env:"MISSING" default:"a"`
+		IntProp       int             `env:"MISSING" default:"1"`
+		IntsProp      []int           `env:"MISSING" default:"1,2,3"`
+		Int8Prop      int8            `env:"MISSING" default:"1"`
+		Int8sProp     []int8          `env:"MISSING" default:"1,2,3"`
+		Int16Prop     int16           `env:"MISSING" default:"1"`
+		Int16sProp    []int16         `env:"MISSING" default:"1,2,3"`
+		Int32Prop     int32           `env:"MISSING" default:"1"`
+		Int32sProp    []int32         `env:"MISSING" default:"1,2,3"`
+		Int64Prop     int64           `env:"MISSING" default:"1"`
+		Int64sProp    []int64         `env:"MISSING" default:"1,2,3"`
+		UIntProp      uint            `env:"MISSING" default:"1"`
+		UIntsProp     []uint          `env:"MISSING" default:"1,2,3"`
+		UInt16Prop    uint16          `env:"MISSING" default:"1"`
+		UInt16sProp   []uint16        `env:"MISSING" default:"1,2,3"`
+		UInt32Prop    uint32          `env:"MISSING" default:"1"`
+		UInt32sProp   []uint32        `env:"MISSING" default:"1,2,3"`
+		UInt64Prop    uint64          `env:"MISSING" default:"1"`
+		UInt64sProp   []uint64        `env:"MISSING" default:"1,2,3"`
+		Float32Prop   float32         `env:"MISSING" default:"1.1"`
+		Float32sProp  []float32       `env:"MISSING" default:"1.1,2.2,3.3"`
+		Float64Prop   float64         `env:"MISSING" default:"1.1"`
+		Float64sProp  []float64       `env:"MISSING" default:"1.1,2.2,3.3"`
+		DurationProp  time.Duration   `env:"MISSING" default:"1h2m3s"`
+		DurationsProp []time.Duration `env:"MISING" default:"1h,2m,3s"`
 	}{}
 
 	ErrorNil(t, Set(&config))
-	Equals(t, "hello", config.Prop)
+
+	Equals(t, true, config.BoolProp)
+	Equals(t, []bool{true, false, true}, config.BoolsProp)
+	Equals(t, "a", config.StringProp)
+	Equals(t, []string{"a", "b", "c"}, config.StringsProp)
+	Equals(t, []byte("a"), config.BytesProp)
+	Equals(t, 1, config.IntProp)
+	Equals(t, []int{1, 2, 3}, config.IntsProp)
+	Equals(t, int8(1), config.Int8Prop)
+	Equals(t, []int8{1, 2, 3}, config.Int8sProp)
+	Equals(t, int16(1), config.Int16Prop)
+	Equals(t, []int16{1, 2, 3}, config.Int16sProp)
+	Equals(t, int32(1), config.Int32Prop)
+	Equals(t, []int32{1, 2, 3}, config.Int32sProp)
+	Equals(t, int64(1), config.Int64Prop)
+	Equals(t, []int64{1, 2, 3}, config.Int64sProp)
+	Equals(t, 1, config.IntProp)
+	Equals(t, []uint{1, 2, 3}, config.UIntsProp)
+	Equals(t, uint16(1), config.UInt16Prop)
+	Equals(t, []uint16{1, 2, 3}, config.UInt16sProp)
+	Equals(t, uint32(1), config.UInt32Prop)
+	Equals(t, []uint32{1, 2, 3}, config.UInt32sProp)
+	Equals(t, uint64(1), config.UInt64Prop)
+	Equals(t, []uint64{1, 2, 3}, config.UInt64sProp)
+	Equals(t, float32(1.1), config.Float32Prop)
+	Equals(t, []float32{1.1, 2.2, 3.3}, config.Float32sProp)
+	Equals(t, float64(1.1), config.Float64Prop)
+	Equals(t, []float64{1.1, 2.2, 3.3}, config.Float64sProp)
+	Equals(t, time.Hour+time.Minute*2+time.Second*3, config.DurationProp)
+	Equals(t, []time.Duration{time.Hour, time.Minute * 2, time.Second * 3}, config.DurationsProp)
 }
 
 func TestEnvRequiredWithDefaultWhenMissing(t *testing.T) {
+	unsetEnvironment()
+
 	config := struct {
-		Prop string `env:"PROP" required:"true" default:"hello"`
+		BoolProp      bool            `env:"MISSING" required:"true" default:"true"`
+		BoolsProp     []bool          `env:"MISSING" required:"true" default:"true,false,true"`
+		StringProp    string          `env:"MISSING" required:"true" default:"a"`
+		StringsProp   []string        `env:"MISSING" required:"true" default:"a,b,c"`
+		BytesProp     []byte          `env:"MISSING" required:"true" default:"a"`
+		IntProp       int             `env:"MISSING" required:"true" default:"1"`
+		IntsProp      []int           `env:"MISSING" required:"true" default:"1,2,3"`
+		Int8Prop      int8            `env:"MISSING" required:"true" default:"1"`
+		Int8sProp     []int8          `env:"MISSING" required:"true" default:"1,2,3"`
+		Int16Prop     int16           `env:"MISSING" required:"true" default:"1"`
+		Int16sProp    []int16         `env:"MISSING" required:"true" default:"1,2,3"`
+		Int32Prop     int32           `env:"MISSING" required:"true" default:"1"`
+		Int32sProp    []int32         `env:"MISSING" required:"true" default:"1,2,3"`
+		Int64Prop     int64           `env:"MISSING" required:"true" default:"1"`
+		Int64sProp    []int64         `env:"MISSING" required:"true" default:"1,2,3"`
+		UIntProp      uint            `env:"MISSING" required:"true" default:"1"`
+		UIntsProp     []uint          `env:"MISSING" required:"true" default:"1,2,3"`
+		UInt16Prop    uint16          `env:"MISSING" required:"true" default:"1"`
+		UInt16sProp   []uint16        `env:"MISSING" required:"true" default:"1,2,3"`
+		UInt32Prop    uint32          `env:"MISSING" required:"true" default:"1"`
+		UInt32sProp   []uint32        `env:"MISSING" required:"true" default:"1,2,3"`
+		UInt64Prop    uint64          `env:"MISSING" required:"true" default:"1"`
+		UInt64sProp   []uint64        `env:"MISSING" required:"true" default:"1,2,3"`
+		Float32Prop   float32         `env:"MISSING" required:"true" default:"1.1"`
+		Float32sProp  []float32       `env:"MISSING" required:"true" default:"1.1,2.2,3.3"`
+		Float64Prop   float64         `env:"MISSING" required:"true" default:"1.1"`
+		Float64sProp  []float64       `env:"MISSING" required:"true" default:"1.1,2.2,3.3"`
+		DurationProp  time.Duration   `env:"MISSING" required:"true" default:"1h2m3s"`
+		DurationsProp []time.Duration `env:"MISSING" required:"true" default:"1h,2m,3s"`
 	}{}
 
 	ErrorNil(t, Set(&config))
-	Equals(t, "hello", config.Prop)
+
+	Equals(t, true, config.BoolProp)
+	Equals(t, []bool{true, false, true}, config.BoolsProp)
+	Equals(t, "a", config.StringProp)
+	Equals(t, []string{"a", "b", "c"}, config.StringsProp)
+	Equals(t, []byte("a"), config.BytesProp)
+	Equals(t, 1, config.IntProp)
+	Equals(t, []int{1, 2, 3}, config.IntsProp)
+	Equals(t, int8(1), config.Int8Prop)
+	Equals(t, []int8{1, 2, 3}, config.Int8sProp)
+	Equals(t, int16(1), config.Int16Prop)
+	Equals(t, []int16{1, 2, 3}, config.Int16sProp)
+	Equals(t, int32(1), config.Int32Prop)
+	Equals(t, []int32{1, 2, 3}, config.Int32sProp)
+	Equals(t, int64(1), config.Int64Prop)
+	Equals(t, []int64{1, 2, 3}, config.Int64sProp)
+	Equals(t, 1, config.IntProp)
+	Equals(t, []uint{1, 2, 3}, config.UIntsProp)
+	Equals(t, uint16(1), config.UInt16Prop)
+	Equals(t, []uint16{1, 2, 3}, config.UInt16sProp)
+	Equals(t, uint32(1), config.UInt32Prop)
+	Equals(t, []uint32{1, 2, 3}, config.UInt32sProp)
+	Equals(t, uint64(1), config.UInt64Prop)
+	Equals(t, []uint64{1, 2, 3}, config.UInt64sProp)
+	Equals(t, float32(1.1), config.Float32Prop)
+	Equals(t, []float32{1.1, 2.2, 3.3}, config.Float32sProp)
+	Equals(t, float64(1.1), config.Float64Prop)
+	Equals(t, []float64{1.1, 2.2, 3.3}, config.Float64sProp)
+	Equals(t, time.Hour+time.Minute*2+time.Second*3, config.DurationProp)
+	Equals(t, []time.Duration{time.Hour, time.Minute * 2, time.Second * 3}, config.DurationsProp)
 }
 
 func TestEnvCustomDelimiter(t *testing.T) {
