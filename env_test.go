@@ -384,9 +384,9 @@ func TestEnvWithDefaultWhenMissing(t *testing.T) {
 	config := struct {
 		BoolProp      bool            `env:"MISSING" default:"true"`
 		BoolsProp     []bool          `env:"MISSING" default:"true,false,true"`
-		StringProp    string          `env:"MISSING" default:"a"`
+		StringProp    string          `env:"MISSING" default:"abc"`
 		StringsProp   []string        `env:"MISSING" default:"a,b,c"`
-		BytesProp     []byte          `env:"MISSING" default:"a"`
+		BytesProp     []byte          `env:"MISSING" default:"abc"`
 		IntProp       int             `env:"MISSING" default:"1"`
 		IntsProp      []int           `env:"MISSING" default:"1,2,3"`
 		Int8Prop      int8            `env:"MISSING" default:"1"`
@@ -417,9 +417,9 @@ func TestEnvWithDefaultWhenMissing(t *testing.T) {
 
 	Equals(t, true, config.BoolProp)
 	Equals(t, []bool{true, false, true}, config.BoolsProp)
-	Equals(t, "a", config.StringProp)
+	Equals(t, "abc", config.StringProp)
 	Equals(t, []string{"a", "b", "c"}, config.StringsProp)
-	Equals(t, []byte("a"), config.BytesProp)
+	Equals(t, []byte("abc"), config.BytesProp)
 	Equals(t, 1, config.IntProp)
 	Equals(t, []int{1, 2, 3}, config.IntsProp)
 	Equals(t, int8(1), config.Int8Prop)
