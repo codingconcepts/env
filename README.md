@@ -24,7 +24,7 @@ import (
 	"github.com/codingconcepts/env"
 )
 
-type awsConfig struct {
+type config struct {
 	Secret            []byte        `env:"SECRET" required:"true"`
 	Region            string        `env:"REGION"`
 	Port              int           `env:"PORT" required:"true"`
@@ -33,8 +33,8 @@ type awsConfig struct {
 }
 
 func main() {
-	config := awsConfig{}
-	if err := env.Set(&config); err != nil {
+	c := config{}
+	if err := env.Set(&c); err != nil {
 		log.Fatal(err)
 	}
 
