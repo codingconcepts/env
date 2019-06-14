@@ -46,7 +46,7 @@ func main() {
 $ ID=1 SECRET=shh PORT=1234 PEERS=localhost:1235,localhost:1236 TIMEOUT=5s go run main.go
 ```
 
-Env currently supports the following data types.  If you'd like to have more, please get in touch or feel free to create a pull request:
+## Supported field types
 
 - bool and []bool
 - string and []string
