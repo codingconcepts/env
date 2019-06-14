@@ -29,7 +29,7 @@ type config struct {
 	Region            string        `env:"REGION"`
 	Port              int           `env:"PORT" required:"true"`
 	Peers             []string      `env:"PEERS"`
-	ConnectionTimeout time.Duration `env:"TIMEOUT"`
+	ConnectionTimeout time.Duration `env:"TIMEOUT" default:"10s"`
 }
 
 func main() {
