@@ -48,10 +48,11 @@ $ ID=1 SECRET=shh PORT=1234 PEERS=localhost:1235,localhost:1236 TIMEOUT=5s go ru
 
 ## Supported field types
 
-- bool and []bool
-- string and []string
-- []byte
-- int, int8, int16, int32, int64 and all slice equivalents
-- uint, uint8, uint16, uint32, uint64 and all slice equivalents
-- float32, float64 and all slice equivalents
-- time.Duration and []time.Duration
+- `bool` and `[]bool`
+- `string` and `[]string`
+- `[]byte`
+- `int`, `int8`, `int16`, `int32`, `int64`, `[]int`, `[]int8`, `[]int16`, `[]int32`, and `[]int64`
+- `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `[]uint`, `[]uint8`, `[]uint16`, `[]uint32`, and `[]uint64`
+- `float32` and `[]float32`
+- `float64` and `[]float64`
+- `time.Duration` and `[]time.Duration`
