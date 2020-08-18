@@ -28,7 +28,7 @@ type config struct {
 	Secret            []byte        `env:"SECRET" required:"true"`
 	Region            string        `env:"REGION"`
 	Port              int           `env:"PORT" required:"true"`
-	Peers             []string      `env:"PEERS"`
+	Peers             []string      `env:"PEERS"` // you can use `delimiter` tag to specify separator, for example `delimiter:" "` 
 	ConnectionTimeout time.Duration `env:"TIMEOUT" default:"10s"`
 }
 
