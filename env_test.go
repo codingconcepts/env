@@ -232,6 +232,16 @@ func TestEnvStringSlice(t *testing.T) {
 	Equals(t, []string{"a", "b", "c"}, config.Items)
 }
 
+func TestEnvEmptyStringSlice(t *testing.T) {
+	os.Setenv("PROPS", "")
+	config := struct {
+		Items []string `env:"PROPS"`
+	}{}
+
+	ErrorNil(t, Set(&config))
+	Equals(t, 0, len(config.Items))
+}
+
 func TestEnvIntegerSlices(t *testing.T) {
 	os.Setenv("PROP", "1, 2, 3")
 
