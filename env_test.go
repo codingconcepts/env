@@ -614,7 +614,7 @@ func TestInvalidConfigurationForDuration(t *testing.T) {
 
 	err := Set(&config)
 	ErrorNotNil(t, err)
-	Equals(t, `error setting "Prop": time: unknown unit hh in duration 1hh`, err.Error())
+	Equals(t, `error setting "Prop": time: unknown unit "hh" in duration "1hh"`, err.Error())
 }
 
 func TestEnvNonPointer(t *testing.T) {
@@ -662,6 +662,17 @@ func TestEnvCustomTypeStructWithError(t *testing.T) {
 	ErrorNotNil(t, err)
 	Assert(t, strings.HasPrefix(err.Error(), "error in custom setter"))
 	Assert(t, strings.Contains(err.Error(), errConfigDurationError.Error()))
+}
+
+func TestEnvPrefixed(t *testing.T) {
+	os.Setenv("PROP_PROP", "hello")
+
+	config := struct {
+		Prop string `env:"PROP"`
+	}{}
+
+	ErrorNil(t, SetPrefix(&config, "PROP_"))
+	Equals(t, "hello", config.Prop)
 }
 
 type configDuration struct {
